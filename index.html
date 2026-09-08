@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SilenceCut — Editor de Vídeo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,7 +16,7 @@
   <div class="login-bg-glow"></div>
   <div class="login-card">
     <div class="login-logo">
-      <span class="logo-mark">◆</span>
+      <span class="logo-mark" data-icon="scissors"></span>
       <span class="logo-text">SilenceCut</span>
     </div>
     <p class="login-sub">Corte silêncios automaticamente. Edite mais rápido.</p>
@@ -40,22 +43,22 @@
   <!-- Barra superior -->
   <header class="topbar">
     <div class="topbar-left">
-      <span class="logo-mark small">◆</span>
+      <span class="logo-mark small" data-icon="scissors"></span>
       <span class="brand">SilenceCut</span>
       <span class="project-name" id="project-name" contenteditable="true" spellcheck="false">Projeto sem título</span>
     </div>
     <div class="topbar-center">
-      <button class="icon-btn" id="btn-undo" title="Desfazer (Ctrl+Z)">↩︎</button>
-      <button class="icon-btn" id="btn-redo" title="Refazer (Ctrl+Y)">↪︎</button>
+      <button class="icon-btn" id="btn-undo" title="Desfazer (Ctrl+Z)"><span data-icon="undo"></span></button>
+      <button class="icon-btn" id="btn-redo" title="Refazer (Ctrl+Y)"><span data-icon="redo"></span></button>
       <span class="divider-v"></span>
-      <button class="icon-btn" id="btn-split" title="Dividir no cursor (S)">✂︎</button>
-      <button class="icon-btn" id="btn-mute" title="Mutar bloco selecionado (M)">🔇</button>
-      <button class="icon-btn" id="btn-delete" title="Excluir bloco (Del)">🗑</button>
+      <button class="icon-btn" id="btn-split" title="Dividir no cursor (S)"><span data-icon="scissors"></span></button>
+      <button class="icon-btn" id="btn-mute" title="Mutar bloco selecionado (M)"><span data-icon="mute"></span></button>
+      <button class="icon-btn" id="btn-delete" title="Excluir bloco (Del)"><span data-icon="trash"></span></button>
     </div>
     <div class="topbar-right">
       <span id="user-email" class="user-email"></span>
-      <button id="btn-logout" class="btn btn-ghost btn-sm">Sair</button>
-      <button id="btn-export" class="btn btn-primary btn-sm">Exportar MP4</button>
+      <button id="btn-logout" class="btn btn-ghost btn-sm btn-icon-label"><span data-icon="logout"></span> Sair</button>
+      <button id="btn-export" class="btn btn-primary btn-sm btn-icon-label"><span data-icon="download"></span> Exportar MP4</button>
     </div>
   </header>
 
@@ -65,8 +68,8 @@
     <aside class="sidebar-media">
       <div class="sidebar-header">
         <span>Mídia</span>
-        <label class="btn btn-primary btn-sm" id="btn-upload-label">
-          + Importar
+        <label class="btn btn-primary btn-sm btn-icon-label" id="btn-upload-label">
+          <span data-icon="upload"></span> Importar
           <input type="file" id="input-upload" accept="video/*" multiple hidden />
         </label>
       </div>
@@ -81,14 +84,14 @@
         <video id="player" class="player" playsinline></video>
         <div class="player-empty" id="player-empty">
           <div>
-            <div class="player-empty-icon">▶</div>
+            <div class="player-empty-icon" data-icon="film"></div>
             <p>Importe um vídeo e adicione-o à timeline para começar</p>
           </div>
         </div>
       </div>
 
       <div class="player-controls">
-        <button class="icon-btn" id="btn-playpause" title="Reproduzir/Pausar (Espaço)">▶</button>
+        <button class="icon-btn" id="btn-playpause" title="Reproduzir/Pausar (Espaço)"><span data-icon="play"></span></button>
         <span class="time-display"><span id="time-current">00:00.0</span> / <span id="time-total">00:00.0</span></span>
         <label class="preview-skip">
           <input type="checkbox" id="chk-skip-preview" checked />
@@ -131,9 +134,9 @@
   <!-- Timeline inferior -->
   <section class="timeline-area">
     <div class="timeline-toolbar">
-      <button class="icon-btn" id="btn-zoom-out" title="Reduzir zoom">−</button>
+      <button class="icon-btn" id="btn-zoom-out" title="Reduzir zoom"><span data-icon="minus"></span></button>
       <input type="range" id="zoom" min="20" max="400" value="100" />
-      <button class="icon-btn" id="btn-zoom-in" title="Aumentar zoom">+</button>
+      <button class="icon-btn" id="btn-zoom-in" title="Aumentar zoom"><span data-icon="plus"></span></button>
       <span class="divider-v"></span>
       <span class="timeline-hint">Arraste um bloco para reordenar · Clique para selecionar · Duplo clique para mutar</span>
     </div>
@@ -154,7 +157,7 @@
     <div class="progress-bar"><div class="progress-fill" id="export-progress-fill"></div></div>
     <p id="export-status">Preparando…</p>
     <button class="btn btn-ghost btn-sm hidden" id="btn-export-cancel">Cancelar</button>
-    <a class="btn btn-primary btn-block hidden" id="export-download" download="video-editado.mp4">Baixar MP4</a>
+    <a class="btn btn-primary btn-block hidden btn-icon-label" id="export-download" download="video-editado.mp4"><span data-icon="download"></span> Baixar MP4</a>
   </div>
 </div>
 
@@ -162,6 +165,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/state.js"></script>
 <script src="js/silence.js"></script>
