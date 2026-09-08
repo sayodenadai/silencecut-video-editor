@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SilenceCut — Editor de Vídeo</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ===================== TELA DE LOGIN ===================== -->
+<section id="view-login" class="view view-login">
+  <div class="login-bg-glow"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="logo-mark">◆</span>
+      <span class="logo-text">SilenceCut</span>
+    </div>
+    <p class="login-sub">Corte silêncios automaticamente. Edite mais rápido.</p>
+
+    <form id="login-form" class="login-form">
+      <label class="field">
+        <span>E-mail</span>
+        <input type="email" id="login-email" placeholder="voce@exemplo.com" required />
+      </label>
+      <label class="field">
+        <span>Senha</span>
+        <input type="password" id="login-password" placeholder="••••••••" required minlength="4" />
+      </label>
+      <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+      <button type="button" id="btn-guest" class="btn btn-ghost btn-block">Entrar como convidado</button>
+    </form>
+    <p class="login-hint">Login local de demonstração — nenhum dado sai do seu navegador.</p>
+  </div>
+</section>
+
+<!-- ===================== EDITOR ===================== -->
+<section id="view-editor" class="view view-editor hidden">
+
+  <!-- Barra superior -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo-mark small">◆</span>
+      <span class="brand">SilenceCut</span>
+      <span class="project-name" id="project-name" contenteditable="true" spellcheck="false">Projeto sem título</span>
+    </div>
+    <div class="topbar-center">
+      <button class="icon-btn" id="btn-undo" title="Desfazer (Ctrl+Z)">↩︎</button>
+      <button class="icon-btn" id="btn-redo" title="Refazer (Ctrl+Y)">↪︎</button>
+      <span class="divider-v"></span>
+      <button class="icon-btn" id="btn-split" title="Dividir no cursor (S)">✂︎</button>
+      <button class="icon-btn" id="btn-mute" title="Mutar bloco selecionado (M)">🔇</button>
+      <button class="icon-btn" id="btn-delete" title="Excluir bloco (Del)">🗑</button>
+    </div>
+    <div class="topbar-right">
+      <span id="user-email" class="user-email"></span>
+      <button id="btn-logout" class="btn btn-ghost btn-sm">Sair</button>
+      <button id="btn-export" class="btn btn-primary btn-sm">Exportar MP4</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+
+    <!-- Sidebar de mídias -->
+    <aside class="sidebar-media">
+      <div class="sidebar-header">
+        <span>Mídia</span>
+        <label class="btn btn-primary btn-sm" id="btn-upload-label">
+          + Importar
+          <input type="file" id="input-upload" accept="video/*" multiple hidden />
+        </label>
+      </div>
+      <div class="media-list" id="media-list">
+        <p class="empty-hint">Nenhum vídeo importado ainda.<br/>Clique em "+ Importar" para começar.</p>
+      </div>
+    </aside>
+
+    <!-- Centro: player + painel de silêncio -->
+    <main class="stage">
+      <div class="player-wrap">
+        <video id="player" class="player" playsinline></video>
+        <div class="player-empty" id="player-empty">
+          <div>
+            <div class="player-empty-icon">▶</div>
+            <p>Importe um vídeo e adicione-o à timeline para começar</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="player-controls">
+        <button class="icon-btn" id="btn-playpause" title="Reproduzir/Pausar (Espaço)">▶</button>
+        <span class="time-display"><span id="time-current">00:00.0</span> / <span id="time-total">00:00.0</span></span>
+        <label class="preview-skip">
+          <input type="checkbox" id="chk-skip-preview" checked />
+          Pular silêncios na pré-visualização
+        </label>
+      </div>
+    </main>
+
+    <!-- Painel direito: detecção de silêncio -->
+    <aside class="sidebar-detect">
+      <div class="panel-block">
+        <h3>Detecção de silêncio</h3>
+        <label class="field-inline">
+          <span>Sensibilidade</span>
+          <span class="value-pill" id="sensitivity-value">50%</span>
+        </label>
+        <input type="range" id="sensitivity" min="0" max="100" value="50" />
+        <p class="field-help">Mais alta = detecta trechos mais sutis de silêncio.</p>
+
+        <label class="field-inline">
+          <span>Duração mínima</span>
+          <span class="value-pill" id="minlen-value">0.4s</span>
+        </label>
+        <input type="range" id="minlen" min="1" max="20" value="4" />
+        <p class="field-help">Ignora silêncios mais curtos que isso.</p>
+
+        <button class="btn btn-secondary btn-block" id="btn-detect">Detectar silêncios</button>
+        <button class="btn btn-primary btn-block" id="btn-cut-all" disabled>Cortar todos os silêncios</button>
+      </div>
+
+      <div class="panel-block panel-grow">
+        <h3>Silêncios encontrados <span class="count-pill" id="silence-count">0</span></h3>
+        <div class="silence-list" id="silence-list">
+          <p class="empty-hint">Rode a detecção para ver os trechos de silêncio aqui.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Timeline inferior -->
+  <section class="timeline-area">
+    <div class="timeline-toolbar">
+      <button class="icon-btn" id="btn-zoom-out" title="Reduzir zoom">−</button>
+      <input type="range" id="zoom" min="20" max="400" value="100" />
+      <button class="icon-btn" id="btn-zoom-in" title="Aumentar zoom">+</button>
+      <span class="divider-v"></span>
+      <span class="timeline-hint">Arraste um bloco para reordenar · Clique para selecionar · Duplo clique para mutar</span>
+    </div>
+    <div class="timeline-scroll" id="timeline-scroll">
+      <div class="timeline-ruler" id="timeline-ruler"></div>
+      <div class="timeline-track" id="timeline-track">
+        <div class="playhead" id="playhead"></div>
+      </div>
+    </div>
+  </section>
+
+</section>
+
+<!-- ===================== OVERLAY DE EXPORTAÇÃO ===================== -->
+<div id="export-overlay" class="export-overlay hidden">
+  <div class="export-card">
+    <h3>Exportando vídeo…</h3>
+    <div class="progress-bar"><div class="progress-fill" id="export-progress-fill"></div></div>
+    <p id="export-status">Preparando…</p>
+    <button class="btn btn-ghost btn-sm hidden" id="btn-export-cancel">Cancelar</button>
+    <a class="btn btn-primary btn-block hidden" id="export-download" download="video-editado.mp4">Baixar MP4</a>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/state.js"></script>
+<script src="js/silence.js"></script>
+<script src="js/media.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/player.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
