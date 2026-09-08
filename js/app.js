@@ -1,5 +1,7 @@
 // Ponto de entrada: login e ligação dos módulos
 (function App() {
+  Icons.hydrate();
+
   const viewLogin = document.getElementById("view-login");
   const viewEditor = document.getElementById("view-editor");
   const loginForm = document.getElementById("login-form");

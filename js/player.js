@@ -82,13 +82,13 @@ const Player = (() => {
     if (isPlaying) {
       videoEl.pause();
       isPlaying = false;
-      btnPlay.textContent = "▶";
+      btnPlay.innerHTML = Icons.svg("play");
       cancelAnimationFrame(rafId);
     } else {
       if (!currentClipId) seekGlobal(State.s.playhead);
       videoEl.play().catch(() => {});
       isPlaying = true;
-      btnPlay.textContent = "⏸";
+      btnPlay.innerHTML = Icons.svg("pause");
       tick();
     }
   }
@@ -104,7 +104,7 @@ const Player = (() => {
       loadClipMedia(nextClip, 0, true);
     } else {
       isPlaying = false;
-      btnPlay.textContent = "▶";
+      btnPlay.innerHTML = Icons.svg("play");
       cancelAnimationFrame(rafId);
     }
   }

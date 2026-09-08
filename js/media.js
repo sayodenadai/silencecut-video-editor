@@ -93,7 +93,7 @@ const Media = (() => {
           <div class="media-name">${escapeHtml(item.name)}</div>
           <div class="media-meta">${item.status === "loading" ? "analisando…" : Utils.fmtDuration(item.duration)} · ${Utils.fmtBytes(item.sizeBytes)}</div>
         </div>
-        <button class="media-add-btn" title="Adicionar à timeline">+</button>
+        <button class="media-add-btn" title="Adicionar à timeline">${Icons.svg("plus")}</button>
       `;
       el.querySelector(".media-add-btn").addEventListener("click", (ev) => {
         ev.stopPropagation();

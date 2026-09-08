@@ -117,7 +117,7 @@ const Timeline = (() => {
 
       const header = document.createElement("div");
       header.className = "clip-header";
-      header.innerHTML = `${clip.muted ? '<span class="mute-flag">🔇</span>' : ""}<span>${escapeHtml(clip.name)}</span>`;
+      header.innerHTML = `${clip.muted ? `<span class="mute-flag">${Icons.svg("mute")}</span>` : ""}<span class="clip-name-text">${escapeHtml(clip.name)}</span>`;
       el.appendChild(header);
 
       const waveWrap = document.createElement("div");
